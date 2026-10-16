@@ -77,7 +77,7 @@ class _ServerSwitcherSheetState extends State<ServerSwitcherSheet> {
   }
 
   String _displayName(String host) {
-    if (host == AppConstants.publicBackendUrl) return 'Ngrok Cloud';
+    if (host == AppConstants.publicBackendUrl) return 'Render Cloud';
     if (host == AppConstants.localLanUrl) return 'Local Wi-Fi';
     return host;
   }
@@ -123,13 +123,13 @@ class _ServerSwitcherSheetState extends State<ServerSwitcherSheet> {
           ),
           const SizedBox(height: 18),
 
-          // Option 1: Ngrok Public URL
+          // Option 1: Render Cloud Backend (Live)
           _buildOption(
-            title: 'Ngrok Cloud Tunnel (Public)',
+            title: 'Render Cloud Backend (Live)',
             subtitle: AppConstants.publicBackendUrl,
             host: AppConstants.publicBackendUrl,
             icon: Icons.cloud_done_rounded,
-            badge: 'Online Everywhere',
+            badge: 'Online 24/7',
           ),
           const SizedBox(height: 10),
 

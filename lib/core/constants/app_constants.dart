@@ -28,7 +28,7 @@ class AppConstants {
 
   static String get defaultHost {
     if (_envApiUrl.isNotEmpty) return _envApiUrl;
-    // Default to the live Render backend across Web and Mobile:
+    // Always default to live Render backend for all platforms (Web, Android, Desktop):
     return publicBackendUrl;
   }
 

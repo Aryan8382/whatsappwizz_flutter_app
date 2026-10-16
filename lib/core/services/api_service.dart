@@ -131,10 +131,13 @@ class ApiService {
   /// Load any user-selected server host on app startup
   Future<void> initHost() async {
     final saved = await _safeRead('ww_server_host');
-    if (saved != null && saved.isNotEmpty) {
+    if (saved != null && saved.isNotEmpty && !saved.contains('ngrok') && !saved.contains('localhost:4000')) {
       AppConstants.customHost = saved;
-      _dio.options.baseUrl = AppConstants.apiBaseUrl;
+    } else {
+      AppConstants.customHost = AppConstants.publicBackendUrl;
+      await _safeWrite('ww_server_host', AppConstants.publicBackendUrl);
     }
+    _dio.options.baseUrl = AppConstants.apiBaseUrl;
   }
 
   /// Switch the active backend host (e.g. Ngrok vs Local LAN)
