@@ -248,21 +248,34 @@ class ApiInboxRepository implements InboxRepository {
 
   @override
   Future<void> assignAgent(String conversationId, String agentName) async {
+    final clean = agentName.trim();
+    if (clean.isEmpty) {
+      await _api.post('/conversations/$conversationId/assign', {
+        'agentId': null,
+        'agentName': '',
+      });
+      return;
+    }
+
     int? agentId;
-    final lower = agentName.toLowerCase();
-    if (lower.contains('admin')) {
-      agentId = 1;
-    } else if (lower.contains('supervisor')) {
-      agentId = 2;
-    } else if (lower.contains('agent')) {
-      agentId = 3;
-    } else if (lower.contains('reseller')) {
-      agentId = 4;
+    final lower = clean.toLowerCase();
+    if (lower == 'demo admin' || lower == 'admin') {
+      agentId = 2; // Demo Admin
+    } else if (lower == 'demo supervisor' || lower == 'supervisor') {
+      agentId = 3; // Demo Supervisor
+    } else if (lower == 'demo agent' || lower == 'agent') {
+      agentId = 4; // Demo Agent
+    } else if (lower == 'demo reseller' || lower == 'reseller') {
+      agentId = 5; // Demo Reseller
+    } else if (lower.contains('aryan')) {
+      agentId = 7;
+    } else if (lower.contains('jay')) {
+      agentId = 8;
     }
 
     await _api.post('/conversations/$conversationId/assign', {
       if (agentId != null) 'agentId': agentId,
-      'agentName': agentName,
+      'agentName': clean,
     });
   }
 

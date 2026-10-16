@@ -226,8 +226,12 @@ class _ChatPaneState extends State<ChatPane> {
     final assignedAgent = conv.assignedAgentName;
     final isAssigned = assignedAgent != null && assignedAgent.isNotEmpty;
     final isAssignedToMe = isAssigned &&
-        (assignedAgent.toLowerCase() == myName.toLowerCase() ||
-            assignedAgent.toLowerCase() == 'you');
+        (assignedAgent.toLowerCase().trim() == myName.toLowerCase().trim() ||
+            assignedAgent.toLowerCase().trim() == 'you' ||
+            (myName.toLowerCase().contains('admin') && assignedAgent.toLowerCase().contains('admin')) ||
+            (myName.toLowerCase().contains('supervisor') && assignedAgent.toLowerCase().contains('supervisor')) ||
+            (myName.toLowerCase().contains('agent') && assignedAgent.toLowerCase().contains('agent')) ||
+            (myName.toLowerCase().contains('reseller') && assignedAgent.toLowerCase().contains('reseller')));
     final isAssignedToOther = isAssigned && !isAssignedToMe;
     final showTopStatusPill = isAssigned &&
         !widget.messages.any((m) =>
