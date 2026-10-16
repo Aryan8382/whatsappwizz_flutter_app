@@ -452,12 +452,19 @@ class _MacOsDockShell extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
-          // Soft subtle ambient drop shadow
+          // Defined dark ambient drop shadow
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-            spreadRadius: -1,
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+            spreadRadius: 0,
+          ),
+          // Dark contact shadow
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -471,10 +478,19 @@ class _MacOsDockShell extends StatelessWidget {
             height: 62,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
-              // Truly transparent background without fill color
-              color: Colors.transparent,
+              // Subtle dark shadow depth inside the transparent dock
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.03),
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.05),
+                ],
+                stops: const [0.0, 0.5, 1.0],
+              ),
               border: Border.all(
-                color: Colors.white.withOpacity(0.30),
+                color: Colors.black.withOpacity(0.08),
                 width: 1.0,
               ),
             ),
