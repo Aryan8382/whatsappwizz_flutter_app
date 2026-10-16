@@ -166,14 +166,14 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: _MacOsDockShell(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final totalWidth = constraints.maxWidth;
                     final itemWidth = totalWidth / itemCount;
-                    // Active pill covering both icon and text label
-                    const pillMarginH = 3.0;
+                    // Smaller, clean white-green active glass tile
+                    const pillMarginH = 6.0;
                     final tileWidth = itemWidth - (pillMarginH * 2);
                     final tileLeft = (_currentPosition * itemWidth) + pillMarginH;
 
@@ -191,59 +191,57 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          // ─── Active Pill Covering Both Icon & Label ───
+                          // ─── Smaller, Clean White-Green Glass Tile ───
                           Positioned(
                             left: tileLeft,
-                            top: 4.5,
-                            bottom: 4.5,
+                            top: 6.0,
+                            bottom: 6.0,
                             width: tileWidth,
                             child: AnimatedScale(
                               scale: _isDragging ? 1.04 : 1.0,
                               duration: const Duration(milliseconds: 160),
                               curve: Curves.easeOutCubic,
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(14),
                                 child: BackdropFilter(
                                   filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      // Transparent luminous glass body with soft emerald sheen
+                                      borderRadius: BorderRadius.circular(14),
+                                      // Clean white-green luminous glass tile
                                       gradient: LinearGradient(
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          Colors.white.withOpacity(0.65),
-                                          const Color(0xFFDCFCE7).withOpacity(0.35),
-                                          Colors.white.withOpacity(0.25),
+                                          Colors.white.withOpacity(0.92),
+                                          const Color(0xFFF0FDF4).withOpacity(0.80),
+                                          const Color(0xFFDCFCE7).withOpacity(0.50),
                                         ],
-                                        stops: const [0.0, 0.45, 1.0],
+                                        stops: const [0.0, 0.5, 1.0],
                                       ),
-                                      // Crisp inner specular highlight border
+                                      // Crisp translucent white-green border
                                       border: Border.all(
-                                        color: Colors.white.withOpacity(0.90),
-                                        width: 1.1,
+                                        color: Colors.white.withOpacity(0.95),
+                                        width: 0.9,
                                       ),
                                       boxShadow: [
-                                        // Outside soft emerald ambient glow
+                                        // Soft subtle emerald ambient glow
                                         BoxShadow(
-                                          color: const Color(0xFF16A34A).withOpacity(0.20),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 3.5),
-                                          spreadRadius: -1,
-                                        ),
-                                        // Outside soft neutral drop
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.04),
-                                          blurRadius: 6,
+                                          color: const Color(0xFF16A34A).withOpacity(0.14),
+                                          blurRadius: 10,
                                           offset: const Offset(0, 2),
                                         ),
-                                        // Outside top specular reflection
+                                        // Subtle soft neutral contact drop
                                         BoxShadow(
-                                          color: Colors.white.withOpacity(0.85),
-                                          blurRadius: 2,
-                                          offset: const Offset(0, -1),
-                                          spreadRadius: 0,
+                                          color: Colors.black.withOpacity(0.03),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 1),
+                                        ),
+                                        // Top specular reflection
+                                        BoxShadow(
+                                          color: Colors.white.withOpacity(0.80),
+                                          blurRadius: 1.5,
+                                          offset: const Offset(0, -0.5),
                                         ),
                                       ],
                                     ),
@@ -358,7 +356,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                               directFactor > 0.5
                                                   ? item.activeIcon
                                                   : item.icon,
-                                              size: 20,
+                                              size: 19,
                                               color: iconColor,
                                               shadows: [
                                                 Shadow(
@@ -464,52 +462,58 @@ class _MacOsDockShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          // Defined dark ambient drop shadow
+          // Soft ambient drop shadow - floating naturally without heavy dark competition
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-            spreadRadius: 0,
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 5),
+            spreadRadius: -2,
           ),
-          // Dark contact shadow
+          // Subtle green glow around the dock shell as requested
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
+            color: const Color(0xFF22C55E).withOpacity(0.12),
+            blurRadius: 16,
             offset: const Offset(0, 2),
+            spreadRadius: 1,
+          ),
+          // Delicate top specular reflection line
+          BoxShadow(
+            color: Colors.white.withOpacity(0.35),
+            blurRadius: 1.5,
+            offset: const Offset(0, -0.5),
             spreadRadius: 0,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(24),
         clipBehavior: Clip.antiAlias,
         child: BackdropFilter(
-          // Small optical background blur
-          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          // Premium liquid glass optical blur
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: Container(
-            height: 62,
+            height: 60,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(22),
-              // Subtle dark shadow depth inside the transparent dock
+              borderRadius: BorderRadius.circular(24),
+              // Transparent liquid glass body
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.03),
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.05),
+                  Colors.white.withOpacity(0.14),
+                  Colors.white.withOpacity(0.04),
                 ],
-                stops: const [0.0, 0.5, 1.0],
               ),
+              // Thin translucent white edge
               border: Border.all(
-                color: Colors.black.withOpacity(0.08),
-                width: 1.0,
+                color: Colors.white.withOpacity(0.45),
+                width: 0.85,
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: child,
             ),
           ),
