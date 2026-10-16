@@ -249,7 +249,10 @@ class ApiInboxRepository implements InboxRepository {
   @override
   Future<void> assignAgent(String conversationId, String agentName) async {
     final clean = agentName.trim();
-    if (clean.isEmpty) {
+    if (clean.isEmpty ||
+        clean.toLowerCase() == 'unassigned' ||
+        clean.toLowerCase() == 'unassign' ||
+        clean.toLowerCase() == 'none') {
       await _api.post('/conversations/$conversationId/assign', {
         'agentId': null,
         'agentName': '',

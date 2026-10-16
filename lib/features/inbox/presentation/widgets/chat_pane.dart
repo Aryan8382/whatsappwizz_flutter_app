@@ -224,14 +224,16 @@ class _ChatPaneState extends State<ChatPane> {
     final conv = widget.conversation;
     final myName = widget.currentUserName ?? 'Demo Admin';
     final assignedAgent = conv.assignedAgentName;
-    final isAssigned = assignedAgent != null && assignedAgent.isNotEmpty;
+    final cleanAgent = assignedAgent?.trim() ?? '';
+    final isAssigned = cleanAgent.isNotEmpty &&
+        !['unassigned', 'unassign', 'none'].contains(cleanAgent.toLowerCase());
     final isAssignedToMe = isAssigned &&
-        (assignedAgent.toLowerCase().trim() == myName.toLowerCase().trim() ||
-            assignedAgent.toLowerCase().trim() == 'you' ||
-            (myName.toLowerCase().contains('admin') && assignedAgent.toLowerCase().contains('admin')) ||
-            (myName.toLowerCase().contains('supervisor') && assignedAgent.toLowerCase().contains('supervisor')) ||
-            (myName.toLowerCase().contains('agent') && assignedAgent.toLowerCase().contains('agent')) ||
-            (myName.toLowerCase().contains('reseller') && assignedAgent.toLowerCase().contains('reseller')));
+        (cleanAgent.toLowerCase() == myName.toLowerCase().trim() ||
+            cleanAgent.toLowerCase() == 'you' ||
+            (myName.toLowerCase().contains('admin') && cleanAgent.toLowerCase().contains('admin')) ||
+            (myName.toLowerCase().contains('supervisor') && cleanAgent.toLowerCase().contains('supervisor')) ||
+            (myName.toLowerCase().contains('agent') && cleanAgent.toLowerCase().contains('agent')) ||
+            (myName.toLowerCase().contains('reseller') && cleanAgent.toLowerCase().contains('reseller')));
     final isAssignedToOther = isAssigned && !isAssignedToMe;
     final showTopStatusPill = isAssigned &&
         !widget.messages.any((m) =>
@@ -323,7 +325,7 @@ class _ChatPaneState extends State<ChatPane> {
                                         ),
                                         const SizedBox(width: 3),
                                         Text(
-                                          isAssignedToMe ? 'You' : assignedAgent,
+                                          isAssignedToMe ? 'You' : cleanAgent,
                                           style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,

@@ -246,7 +246,11 @@ class InboxNotifier extends StateNotifier<InboxState> {
       final mergedList = list.map((serverConv) {
         final convIdStr = serverConv.id.toString();
         if (_assignedAgents.containsKey(convIdStr)) {
-          serverConv = serverConv.copyWith(assignedAgentName: _assignedAgents[convIdStr]);
+          final overrideAgent = _assignedAgents[convIdStr];
+          serverConv = serverConv.copyWith(
+            assignedAgentName: overrideAgent,
+            clearAssignedAgent: overrideAgent == null || overrideAgent.trim().isEmpty,
+          );
         }
         // If this is currently active chat, keep unreadCount = 0
         if (activeId != null && serverConv.id.toString() == activeId.toString()) {
@@ -538,14 +542,15 @@ class InboxNotifier extends StateNotifier<InboxState> {
     final activeId = state.activeConversationId;
     if (activeId == null) return;
 
-    final isUnassign = agentName.isEmpty;
+    final clean = agentName.trim();
+    final isUnassign = clean.isEmpty || clean.toLowerCase() == 'unassigned' || clean.toLowerCase() == 'unassign';
     final isMe = !isUnassign &&
-        (agentName.toLowerCase() == 'you' ||
+        (clean.toLowerCase() == 'you' ||
             (currentUserName != null &&
-                agentName.toLowerCase() == currentUserName.toLowerCase()));
+                clean.toLowerCase() == currentUserName.toLowerCase()));
     final systemText = isUnassign
         ? 'Chat unassigned'
-        : (isMe ? 'Chat assigned to you' : 'Chat assigned to $agentName');
+        : (isMe ? 'Chat assigned to you' : 'Chat assigned to $clean');
 
     final now = DateTime.now().toUtc();
     final systemMsg = Message(
@@ -559,13 +564,16 @@ class InboxNotifier extends StateNotifier<InboxState> {
     );
 
     // Save in persistent maps so background polls don't overwrite them
-    _assignedAgents[activeId.toString()] = isUnassign ? null : agentName;
+    _assignedAgents[activeId.toString()] = isUnassign ? null : clean;
     _systemMessages.putIfAbsent(activeId.toString(), () => []).add(systemMsg);
 
     // Optimistically update assigned agent name and chat timeline
     final updatedList = state.conversations.map((c) {
       return c.id.toString() == activeId.toString()
-          ? c.copyWith(assignedAgentName: isUnassign ? null : agentName)
+          ? c.copyWith(
+              assignedAgentName: isUnassign ? null : clean,
+              clearAssignedAgent: isUnassign,
+            )
           : c;
     }).toList();
 
@@ -575,7 +583,7 @@ class InboxNotifier extends StateNotifier<InboxState> {
     );
 
     try {
-      await _repo.assignAgent(activeId, agentName);
+      await _repo.assignAgent(activeId, isUnassign ? '' : clean);
       await loadConversations(silent: true);
     } catch (e) {
       debugPrint('[InboxNotifier] assignAgent error: $e');

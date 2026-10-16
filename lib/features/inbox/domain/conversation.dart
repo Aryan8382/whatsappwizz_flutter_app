@@ -208,6 +208,9 @@ class Conversation {
     } else {
       agentName = json['assigned_agent_name'] ?? json['assignedAgentName'];
     }
+    if (agentName != null && (agentName.trim().isEmpty || agentName.trim().toLowerCase() == 'unassigned')) {
+      agentName = null;
+    }
 
     // WhatsApp Number ID
     dynamic wabaNumId = json['whatsapp_number_id'] ?? json['whatsappNumberId'];
@@ -300,6 +303,7 @@ class Conversation {
     String? lastMessage,
     DateTime? lastMessageTime,
     String? assignedAgentName,
+    bool clearAssignedAgent = false,
     List<String>? labels,
     int? unreadCount,
     DateTime? lastInboundTime,
@@ -308,7 +312,7 @@ class Conversation {
       id: id ?? this.id,
       organizationId: organizationId ?? this.organizationId,
       contactId: contactId ?? this.contactId,
-      assignedAgent: assignedAgent ?? this.assignedAgent,
+      assignedAgent: clearAssignedAgent ? null : (assignedAgent ?? this.assignedAgent),
       whatsappNumberId: whatsappNumberId ?? this.whatsappNumberId,
       status: status ?? this.status,
       priority: priority ?? this.priority,
@@ -321,7 +325,7 @@ class Conversation {
       contactPhone: contactPhone ?? this.contactPhone,
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
-      assignedAgentName: assignedAgentName ?? this.assignedAgentName,
+      assignedAgentName: clearAssignedAgent ? null : (assignedAgentName ?? this.assignedAgentName),
       labels: labels ?? this.labels,
       unreadCount: unreadCount ?? this.unreadCount,
       lastInboundTime: lastInboundTime ?? this.lastInboundTime,
