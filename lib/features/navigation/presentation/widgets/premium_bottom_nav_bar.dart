@@ -17,11 +17,12 @@ class NavDestinationItem {
   });
 }
 
-/// Double-Glass Floating Bottom Navigation Bar.
-/// Two concentric glass layers create depth:
-///   Outer shell  — wide blur + very faint white tint + crisp rim border
-///   Inner shell  — tighter blur + slightly more opaque tint + inset border
-/// Active pill sits inside the inner shell with a solid frosted fill.
+/// Double-Glass Floating Bottom Navigation Bar with True Tactile Depth.
+/// Layers:
+///   1. Outer Capsule — Optical glassmorphism (sigma 28 blur, specular rim, ambient emerald shadows)
+///   2. Active Pill   — Inset 3D frosted ceramic-glass capsule with inner glow and top reflection arc
+///   3. Active Icons  — 3D gradient shader mask, ambient backlight halo, tactile drop shadow
+///   4. Active Text   — Embossed/engraved dual-layer shadow typography with micro-pip indicator
 class PremiumBottomNavBar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
@@ -162,13 +163,13 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
         right: false,
         bottom: true,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: _DoubleGlassShell(
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final totalWidth = constraints.maxWidth;
                 final itemWidth = totalWidth / itemCount;
-                const pillMarginH = 4.0;
+                const pillMarginH = 3.5;
                 final pillWidth = itemWidth - (pillMarginH * 2);
                 final pillLeft = (_currentPosition * itemWidth) + pillMarginH;
 
@@ -186,7 +187,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // ─── Active Frosted Pill ───
+                      // ─── 3D Elevated Active Frosted Pill ───
                       Positioned(
                         left: pillLeft,
                         top: 4,
@@ -196,56 +197,90 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                           scale: _isDragging ? 1.04 : 1.0,
                           duration: const Duration(milliseconds: 160),
                           curve: Curves.easeOutCubic,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(18),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Colors.white.withOpacity(_isDragging ? 0.98 : 0.94),
-                                      Colors.white.withOpacity(_isDragging ? 0.90 : 0.84),
-                                    ],
-                                  ),
-                                  border: Border.all(
-                                    color: const Color(0xFF16A34A).withOpacity(0.18),
-                                    width: 1.0,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF16A34A).withOpacity(0.08),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 3),
-                                      spreadRadius: -1,
-                                    ),
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.03),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(22),
+                              boxShadow: [
+                                // Ambient emerald soft glow
+                                BoxShadow(
+                                  color: const Color(0xFF16A34A).withOpacity(0.18),
+                                  blurRadius: 14,
+                                  offset: const Offset(0, 4),
+                                  spreadRadius: -1,
                                 ),
-                                // Subtle top specular sheen on the pill
-                                child: Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                    height: 6,
-                                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.white.withOpacity(0.55),
-                                          Colors.white.withOpacity(0.0),
-                                        ],
-                                      ),
+                                // Pure specular top rim light
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.95),
+                                  blurRadius: 1.5,
+                                  offset: const Offset(0, -1),
+                                  spreadRadius: 0,
+                                ),
+                                // Soft contact shadow
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(22),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(22),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Colors.white.withOpacity(_isDragging ? 0.98 : 0.95),
+                                        const Color(0xFFF0FDF4).withOpacity(_isDragging ? 0.94 : 0.88),
+                                      ],
                                     ),
+                                    border: Border.all(
+                                      color: const Color(0xFF22C55E).withOpacity(0.28),
+                                      width: 1.1,
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      // Soft emerald inner backlight aura
+                                      Positioned.fill(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(22),
+                                            gradient: RadialGradient(
+                                              center: Alignment.center,
+                                              radius: 0.85,
+                                              colors: [
+                                                const Color(0xFF22C55E).withOpacity(0.12),
+                                                const Color(0xFF22C55E).withOpacity(0.0),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Top specular glossy sheen arc
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Container(
+                                          height: 8,
+                                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(6),
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                Colors.white.withOpacity(0.75),
+                                                Colors.white.withOpacity(0.0),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -254,7 +289,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                         ),
                       ),
 
-                      // ─── Nav Items ───
+                      // ─── Nav Items with 3D Depth ───
                       Positioned.fill(
                         child: Row(
                           children: List.generate(itemCount, (index) {
@@ -269,15 +304,9 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                             final directFactor = (1.0 - dist).clamp(0.0, 1.0);
                             final isActive = directFactor > 0.45;
 
-                            final itemColor = Color.lerp(
-                              const Color(0xFF64748B),
-                              const Color(0xFF16A34A),
-                              math.pow(proximity, 1.2).toDouble(),
-                            )!;
-
                             final iconScale = 1.0 + ((_isDragging ? 0.16 : 0.13) * proximity);
-                            final labelScale = 1.0 + ((_isDragging ? 0.07 : 0.05) * proximity);
-                            final floatLift = -1.2 * proximity;
+                            final labelScale = 1.0 + ((_isDragging ? 0.06 : 0.04) * proximity);
+                            final floatLift = -1.5 * proximity;
 
                             final fontWeight = FontWeight.lerp(
                               FontWeight.w500,
@@ -305,6 +334,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
+                                        // ─── Icon with Depth & Lighting ───
                                         Transform.scale(
                                           scale: iconScale,
                                           alignment: Alignment.center,
@@ -312,13 +342,67 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                             clipBehavior: Clip.none,
                                             alignment: Alignment.center,
                                             children: [
-                                              Icon(
-                                                directFactor > 0.5
-                                                    ? item.activeIcon
-                                                    : item.icon,
-                                                size: 20,
-                                                color: itemColor,
+                                              // Ambient Backlight Halo behind active icon
+                                              if (proximity > 0.15)
+                                                Container(
+                                                  width: 32,
+                                                  height: 32,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    gradient: RadialGradient(
+                                                      colors: [
+                                                        const Color(0xFF22C55E)
+                                                            .withOpacity(0.20 * proximity),
+                                                        const Color(0xFF22C55E)
+                                                            .withOpacity(0.0),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              // Tactile Drop Shadow Layer under Icon
+                                              if (proximity > 0.25)
+                                                Transform.translate(
+                                                  offset: Offset(0, 1.8 * proximity),
+                                                  child: Icon(
+                                                    item.activeIcon,
+                                                    size: 20,
+                                                    color: const Color(0xFF15803D)
+                                                        .withOpacity(0.25 * proximity),
+                                                  ),
+                                                ),
+
+                                              // Primary Icon with Light-to-Depth Gradient
+                                              ShaderMask(
+                                                shaderCallback: (bounds) {
+                                                  return LinearGradient(
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    colors: [
+                                                      Color.lerp(
+                                                        const Color(0xFF64748B),
+                                                        const Color(0xFF22C55E),
+                                                        proximity,
+                                                      )!,
+                                                      Color.lerp(
+                                                        const Color(0xFF64748B),
+                                                        const Color(0xFF15803D),
+                                                        proximity,
+                                                      )!,
+                                                    ],
+                                                  ).createShader(bounds);
+                                                },
+                                                blendMode: BlendMode.srcIn,
+                                                child: Icon(
+                                                  directFactor > 0.5
+                                                      ? item.activeIcon
+                                                      : item.icon,
+                                                  size: 20,
+                                                  color: Colors.white,
+                                                ),
                                               ),
+
+                                              // Badge
                                               if (badge != null && badge > 0)
                                                 Positioned(
                                                   top: -4,
@@ -329,12 +413,16 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                                       vertical: 1,
                                                     ),
                                                     decoration: BoxDecoration(
-                                                      color: const Color(0xFF334155),
+                                                      color: const Color(0xFF1E293B),
                                                       borderRadius: BorderRadius.circular(10),
+                                                      border: Border.all(
+                                                        color: Colors.white.withOpacity(0.4),
+                                                        width: 0.8,
+                                                      ),
                                                       boxShadow: [
                                                         BoxShadow(
-                                                          color: Colors.black.withOpacity(0.12),
-                                                          blurRadius: 3,
+                                                          color: Colors.black.withOpacity(0.18),
+                                                          blurRadius: 4,
                                                           offset: const Offset(0, 1),
                                                         ),
                                                       ],
@@ -353,7 +441,10 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(height: 2),
+
+                                        const SizedBox(height: 2.5),
+
+                                        // ─── Text Label with Embossed Depth Shadows ───
                                         Transform.scale(
                                           scale: labelScale,
                                           alignment: Alignment.center,
@@ -368,10 +459,52 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                               leadingDistribution:
                                                   TextLeadingDistribution.even,
                                               fontWeight: fontWeight,
-                                              color: itemColor,
-                                              letterSpacing: -0.1,
+                                              color: Color.lerp(
+                                                const Color(0xFF64748B),
+                                                const Color(0xFF15803D),
+                                                proximity,
+                                              ),
+                                              letterSpacing: -0.15,
                                               backgroundColor: Colors.transparent,
+                                              shadows: [
+                                                // Top specular deboss highlight
+                                                Shadow(
+                                                  color: Colors.white.withOpacity(0.9 * proximity),
+                                                  offset: const Offset(0, 0.8),
+                                                  blurRadius: 0.5,
+                                                ),
+                                                // Ambient depth shadow
+                                                Shadow(
+                                                  color: const Color(0xFF16A34A).withOpacity(0.28 * proximity),
+                                                  offset: const Offset(0, 1.2),
+                                                  blurRadius: 2.5,
+                                                ),
+                                              ],
                                             ),
+                                          ),
+                                        ),
+
+                                        // ─── Active Pip Indicator (tactile feedback dot) ───
+                                        const SizedBox(height: 2),
+                                        AnimatedContainer(
+                                          duration: const Duration(milliseconds: 180),
+                                          width: 12 * proximity,
+                                          height: 2.2,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(2),
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                const Color(0xFF22C55E).withOpacity(0.9 * proximity),
+                                                const Color(0xFF15803D).withOpacity(0.9 * proximity),
+                                              ],
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color(0xFF22C55E).withOpacity(0.4 * proximity),
+                                                blurRadius: 3,
+                                                offset: const Offset(0, 1),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -397,8 +530,8 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
 
 // ─────────────────────────────────────────────
 // Liquid Glass Shell
-// Ultra-clean frosted glass capsule with pure downward ambient shadow
-// Completely eliminates any upper gray border, seam, or upward shadow bleed.
+// Multi-layer frosted glass capsule with realistic optical refraction,
+// specular top highlight, and multi-tier ambient emerald drop shadow.
 // ─────────────────────────────────────────────
 class _DoubleGlassShell extends StatelessWidget {
   final Widget child;
@@ -407,61 +540,82 @@ class _DoubleGlassShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Ultra-clean ambient elevation: soft, luminous depth with zero dark slate or gray cast
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(34),
         boxShadow: [
-          // Soft brand emerald ambient glow
+          // Ambient Emerald Glow (brand luminescence)
           BoxShadow(
-            color: const Color(0xFF16A34A).withOpacity(0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
+            color: const Color(0xFF16A34A).withOpacity(0.12),
+            blurRadius: 28,
+            offset: const Offset(0, 8),
             spreadRadius: -2,
           ),
-          // Ultra-soft neutral ambient drop
+          // Deep Soft Ambient Drop Shadow
           BoxShadow(
-            color: Colors.black.withOpacity(0.035),
-            blurRadius: 14,
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 18,
             offset: const Offset(0, 4),
             spreadRadius: -2,
           ),
-          // Specular top light reflection
+          // Specular Top Rim Reflection
           BoxShadow(
-            color: Colors.white.withOpacity(0.85),
-            blurRadius: 1,
-            offset: const Offset(0, -0.5),
+            color: Colors.white.withOpacity(0.95),
+            blurRadius: 2,
+            offset: const Offset(0, -1),
             spreadRadius: 0,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(34),
         clipBehavior: Clip.antiAlias,
         child: BackdropFilter(
-          // Optical background blur
-          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
           child: Container(
-            height: 60,
+            height: 64,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              // Luminous frosted white glass: bright, clean, zero gray darkening from background text
+              borderRadius: BorderRadius.circular(34),
+              // Frosted multi-stop glass gradient
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withOpacity(0.92),
-                  Colors.white.withOpacity(0.82),
+                  Colors.white.withOpacity(0.94),
+                  Colors.white.withOpacity(0.80),
+                  Colors.white.withOpacity(0.88),
                 ],
+                stops: const [0.0, 0.5, 1.0],
               ),
-              // Pure white rim border — crisp and luminous
+              // Crisp specular glass border
               border: Border.all(
                 color: Colors.white.withOpacity(0.95),
-                width: 1.0,
+                width: 1.2,
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: child,
+            child: Stack(
+              children: [
+                // Internal top hairline specular shine
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    height: 1.0,
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.transparent,
+                          Colors.white.withOpacity(0.9),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: child,
+                ),
+              ],
             ),
           ),
         ),
