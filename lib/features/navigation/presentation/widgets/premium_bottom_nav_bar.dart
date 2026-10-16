@@ -161,94 +161,71 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
         left: false,
         right: false,
         bottom: true,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-          child: _DoubleGlassShell(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final totalWidth = constraints.maxWidth;
-                final itemWidth = totalWidth / itemCount;
-                // Perfect capsule shape hugging the active icon
-                final capsuleWidth = (itemWidth - 12).clamp(38.0, 54.0);
-                final capsuleLeft = (_currentPosition * itemWidth) + (itemWidth - capsuleWidth) / 2;
-                const capsuleTop = 6.0;
-                const capsuleHeight = 30.0;
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: _MacOsDockShell(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final totalWidth = constraints.maxWidth;
+                    final itemWidth = totalWidth / itemCount;
+                    // Classic macOS dock active tile
+                    final tileWidth = (itemWidth - 10).clamp(38.0, 52.0);
+                    final tileLeft = (_currentPosition * itemWidth) + (itemWidth - tileWidth) / 2;
+                    const tileTop = 6.0;
+                    const tileHeight = 32.0;
 
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onHorizontalDragStart: (d) => _handlePanStart(d, itemWidth),
-                  onHorizontalDragUpdate: (d) => _handlePanUpdate(d, itemWidth),
-                  onHorizontalDragEnd: (d) => _handlePanEnd(d, itemWidth),
-                  onTapUp: (d) {
-                    final idx = (d.localPosition.dx / itemWidth)
-                        .floor()
-                        .clamp(0, itemCount - 1);
-                    _handleTap(idx);
-                  },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // ─── Active Icon Capsule ───
-                      Positioned(
-                        left: capsuleLeft,
-                        top: capsuleTop,
-                        width: capsuleWidth,
-                        height: capsuleHeight,
-                        child: AnimatedScale(
-                          scale: _isDragging ? 1.08 : 1.0,
-                          duration: const Duration(milliseconds: 160),
-                          curve: Curves.easeOutCubic,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF22C55E), // WhatsApp vibrant emerald
-                                  Color(0xFF16A34A), // deep jewel green
-                                ],
-                              ),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.35),
-                                width: 1.0,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF16A34A).withOpacity(0.38),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 3),
-                                  spreadRadius: -1,
-                                ),
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.40),
-                                  blurRadius: 1.5,
-                                  offset: const Offset(0, -0.8),
-                                  spreadRadius: 0,
-                                ),
-                              ],
-                            ),
-                            child: Align(
-                              alignment: Alignment.topCenter,
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onHorizontalDragStart: (d) => _handlePanStart(d, itemWidth),
+                      onHorizontalDragUpdate: (d) => _handlePanUpdate(d, itemWidth),
+                      onHorizontalDragEnd: (d) => _handlePanEnd(d, itemWidth),
+                      onTapUp: (d) {
+                        final idx = (d.localPosition.dx / itemWidth)
+                            .floor()
+                            .clamp(0, itemCount - 1);
+                        _handleTap(idx);
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // ─── macOS Active Dock Tile ───
+                          Positioned(
+                            left: tileLeft,
+                            top: tileTop,
+                            width: tileWidth,
+                            height: tileHeight,
+                            child: AnimatedScale(
+                              scale: _isDragging ? 1.06 : 1.0,
+                              duration: const Duration(milliseconds: 160),
+                              curve: Curves.easeOutCubic,
                               child: Container(
-                                height: 3.5,
-                                margin: const EdgeInsets.symmetric(horizontal: 8),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.white.withOpacity(0.55),
-                                      Colors.white.withOpacity(0.0),
-                                    ],
+                                  borderRadius: BorderRadius.circular(13),
+                                  color: Colors.white.withOpacity(0.65),
+                                  border: Border.all(
+                                    color: const Color(0xFF16A34A).withOpacity(0.28),
+                                    width: 1.0,
                                   ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.04),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                    BoxShadow(
+                                      color: const Color(0xFF16A34A).withOpacity(0.12),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                      spreadRadius: -1,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
 
                       // ─── Nav Items ───
                       Positioned.fill(
@@ -265,21 +242,20 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                             final directFactor = (1.0 - dist).clamp(0.0, 1.0);
                             final isActive = directFactor > 0.45;
 
-                            // Icon turns pure crisp white when inside the emerald capsule
+                            // Classic macOS active indicator and colors
                             final iconColor = Color.lerp(
-                              const Color(0xFF475569),
-                              Colors.white,
-                              math.pow(directFactor, 1.4).toDouble(),
+                              const Color(0xFF64748B),
+                              const Color(0xFF16A34A),
+                              math.pow(directFactor, 1.2).toDouble(),
                             )!;
 
-                            // Label turns rich emerald green when active
                             final labelColor = Color.lerp(
                               const Color(0xFF64748B),
                               const Color(0xFF15803D),
                               math.pow(proximity, 1.2).toDouble(),
                             )!;
 
-                            final iconScale = 1.0 + ((_isDragging ? 0.12 : 0.08) * proximity);
+                            final iconScale = 1.0 + ((_isDragging ? 0.14 : 0.08) * proximity);
                             final labelScale = 1.0 + ((_isDragging ? 0.05 : 0.03) * proximity);
 
                             final fontWeight = FontWeight.lerp(
@@ -306,7 +282,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      // Fixed 30px height perfectly aligning with the 30px active capsule
+                                      // Height 30px aligning with active dock tile
                                       SizedBox(
                                         height: 30,
                                         child: Center(
@@ -321,7 +297,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                                   directFactor > 0.5
                                                       ? item.activeIcon
                                                       : item.icon,
-                                                  size: 19,
+                                                  size: 20,
                                                   color: iconColor,
                                                 ),
                                                 if (badge != null && badge > 0)
@@ -370,7 +346,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontFamily: 'Inter',
-                                            fontSize: 10,
+                                            fontSize: 9.5,
                                             height: 1.0,
                                             leadingDistribution:
                                                 TextLeadingDistribution.even,
@@ -378,6 +354,27 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                             color: labelColor,
                                             letterSpacing: -0.1,
                                             backgroundColor: Colors.transparent,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      // Iconic macOS dock active indicator dot
+                                      AnimatedOpacity(
+                                        opacity: isActive ? 1.0 : 0.0,
+                                        duration: const Duration(milliseconds: 180),
+                                        child: Container(
+                                          width: 4,
+                                          height: 4,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: const Color(0xFF16A34A),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color(0xFF16A34A).withOpacity(0.5),
+                                                blurRadius: 4,
+                                                spreadRadius: 0.5,
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
@@ -397,68 +394,75 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 
 // ─────────────────────────────────────────────
-// Liquid Glass Shell
-// Ultra-clean frosted glass capsule with pure downward ambient shadow
-// Completely eliminates any upper gray border, seam, or upward shadow bleed.
+// macOS Translucent Glass Dock Shell
+// Floating centered rounded glass dock with frosted blur and ambient elevation
 // ─────────────────────────────────────────────
-class _DoubleGlassShell extends StatelessWidget {
+class _MacOsDockShell extends StatelessWidget {
   final Widget child;
-  const _DoubleGlassShell({required this.child});
+  const _MacOsDockShell({required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
           // Soft ambient drop shadow
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 18,
-            offset: const Offset(0, 5),
+            color: Colors.black.withOpacity(0.09),
+            blurRadius: 22,
+            offset: const Offset(0, 8),
             spreadRadius: -2,
           ),
-          // Subtle brand emerald ambient glow
+          // Subtle inner depth
           BoxShadow(
-            color: const Color(0xFF16A34A).withOpacity(0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-            spreadRadius: -3,
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+          // Specular top rim highlight
+          BoxShadow(
+            color: Colors.white.withOpacity(0.85),
+            blurRadius: 1,
+            offset: const Offset(0, -0.5),
+            spreadRadius: 0,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(22),
         clipBehavior: Clip.antiAlias,
         child: BackdropFilter(
-          // Optical background blur for underlying content
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          // Optical background blur
+          filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
           child: Container(
-            height: 60,
+            height: 62,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              // Truly transparent luminous glassmorphism
+              borderRadius: BorderRadius.circular(22),
+              // macOS frosted translucent glass
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withOpacity(0.24),
-                  Colors.white.withOpacity(0.10),
+                  Colors.white.withOpacity(0.72),
+                  Colors.white.withOpacity(0.52),
                 ],
               ),
-              // Frosted rim border — crisp and luminous
+              // Crisp macOS hairline border
               border: Border.all(
-                color: Colors.white.withOpacity(0.38),
-                width: 1.0,
+                color: Colors.white.withOpacity(0.80),
+                width: 0.85,
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: child,
             ),
           ),
