@@ -464,25 +464,24 @@ class _MacOsDockShell extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          // Soft ambient drop shadow - floating naturally without heavy dark competition
+          // 2-4px dark black shadow grounding the navbar glass
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 5),
-            spreadRadius: -2,
+            color: Colors.black.withOpacity(0.22),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+            spreadRadius: 0,
           ),
-          // Subtle green glow around the dock shell as requested
           BoxShadow(
-            color: const Color(0xFF22C55E).withOpacity(0.12),
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+            spreadRadius: 0,
+          ),
+          // Subtle green ambient glow
+          BoxShadow(
+            color: const Color(0xFF22C55E).withOpacity(0.10),
             blurRadius: 16,
             offset: const Offset(0, 2),
-            spreadRadius: 1,
-          ),
-          // Delicate top specular reflection line
-          BoxShadow(
-            color: Colors.white.withOpacity(0.35),
-            blurRadius: 1.5,
-            offset: const Offset(0, -0.5),
             spreadRadius: 0,
           ),
         ],
@@ -497,18 +496,18 @@ class _MacOsDockShell extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
-              // Transparent liquid glass body
+              // Smoked translucent glass body to prevent being too white
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withOpacity(0.14),
-                  Colors.white.withOpacity(0.04),
+                  const Color(0xFF0F172A).withOpacity(0.16),
+                  const Color(0xFF0F172A).withOpacity(0.24),
                 ],
               ),
               // Thin translucent white edge
               border: Border.all(
-                color: Colors.white.withOpacity(0.45),
+                color: Colors.white.withOpacity(0.35),
                 width: 0.85,
               ),
             ),
