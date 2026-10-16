@@ -161,98 +161,71 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
         left: false,
         right: false,
         bottom: true,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-          child: _DoubleGlassShell(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final totalWidth = constraints.maxWidth;
-                final itemWidth = totalWidth / itemCount;
-                const pillMarginH = 4.0;
-                final pillWidth = itemWidth - (pillMarginH * 2);
-                final pillLeft = (_currentPosition * itemWidth) + pillMarginH;
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: _MacOsDockShell(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final totalWidth = constraints.maxWidth;
+                    final itemWidth = totalWidth / itemCount;
+                    // Classic macOS dock active tile
+                    final tileWidth = (itemWidth - 10).clamp(38.0, 52.0);
+                    final tileLeft = (_currentPosition * itemWidth) + (itemWidth - tileWidth) / 2;
+                    const tileTop = 6.0;
+                    const tileHeight = 32.0;
 
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onHorizontalDragStart: (d) => _handlePanStart(d, itemWidth),
-                  onHorizontalDragUpdate: (d) => _handlePanUpdate(d, itemWidth),
-                  onHorizontalDragEnd: (d) => _handlePanEnd(d, itemWidth),
-                  onTapUp: (d) {
-                    final idx = (d.localPosition.dx / itemWidth)
-                        .floor()
-                        .clamp(0, itemCount - 1);
-                    _handleTap(idx);
-                  },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // ─── Active Frosted Pill ───
-                      Positioned(
-                        left: pillLeft,
-                        top: 4,
-                        bottom: 4,
-                        width: pillWidth,
-                        child: AnimatedScale(
-                          scale: _isDragging ? 1.04 : 1.0,
-                          duration: const Duration(milliseconds: 160),
-                          curve: Curves.easeOutCubic,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onHorizontalDragStart: (d) => _handlePanStart(d, itemWidth),
+                      onHorizontalDragUpdate: (d) => _handlePanUpdate(d, itemWidth),
+                      onHorizontalDragEnd: (d) => _handlePanEnd(d, itemWidth),
+                      onTapUp: (d) {
+                        final idx = (d.localPosition.dx / itemWidth)
+                            .floor()
+                            .clamp(0, itemCount - 1);
+                        _handleTap(idx);
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // ─── macOS Active Dock Tile ───
+                          Positioned(
+                            left: tileLeft,
+                            top: tileTop,
+                            width: tileWidth,
+                            height: tileHeight,
+                            child: AnimatedScale(
+                              scale: _isDragging ? 1.06 : 1.0,
+                              duration: const Duration(milliseconds: 160),
+                              curve: Curves.easeOutCubic,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(18),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Colors.white.withOpacity(_isDragging ? 0.98 : 0.94),
-                                      Colors.white.withOpacity(_isDragging ? 0.90 : 0.84),
-                                    ],
-                                  ),
+                                  borderRadius: BorderRadius.circular(13),
+                                  color: Colors.white.withOpacity(0.65),
                                   border: Border.all(
-                                    color: const Color(0xFF16A34A).withOpacity(0.18),
+                                    color: const Color(0xFF16A34A).withOpacity(0.28),
                                     width: 1.0,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF16A34A).withOpacity(0.08),
+                                      color: Colors.black.withOpacity(0.04),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                    BoxShadow(
+                                      color: const Color(0xFF16A34A).withOpacity(0.12),
                                       blurRadius: 10,
                                       offset: const Offset(0, 3),
                                       spreadRadius: -1,
                                     ),
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.03),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
                                   ],
-                                ),
-                                // Subtle top specular sheen on the pill
-                                child: Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                    height: 6,
-                                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.white.withOpacity(0.55),
-                                          Colors.white.withOpacity(0.0),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
 
                       // ─── Nav Items ───
                       Positioned.fill(
@@ -269,15 +242,21 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                             final directFactor = (1.0 - dist).clamp(0.0, 1.0);
                             final isActive = directFactor > 0.45;
 
-                            final itemColor = Color.lerp(
+                            // Classic macOS active indicator and colors
+                            final iconColor = Color.lerp(
                               const Color(0xFF64748B),
                               const Color(0xFF16A34A),
+                              math.pow(directFactor, 1.2).toDouble(),
+                            )!;
+
+                            final labelColor = Color.lerp(
+                              const Color(0xFF64748B),
+                              const Color(0xFF15803D),
                               math.pow(proximity, 1.2).toDouble(),
                             )!;
 
-                            final iconScale = 1.0 + ((_isDragging ? 0.16 : 0.13) * proximity);
-                            final labelScale = 1.0 + ((_isDragging ? 0.07 : 0.05) * proximity);
-                            final floatLift = -1.2 * proximity;
+                            final iconScale = 1.0 + ((_isDragging ? 0.14 : 0.08) * proximity);
+                            final labelScale = 1.0 + ((_isDragging ? 0.05 : 0.03) * proximity);
 
                             final fontWeight = FontWeight.lerp(
                               FontWeight.w500,
@@ -298,84 +277,108 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                 label: semanticLabel,
                                 tooltip: item.label,
                                 child: Center(
-                                  child: Transform.translate(
-                                    offset: Offset(0, floatLift),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Transform.scale(
-                                          scale: iconScale,
-                                          alignment: Alignment.center,
-                                          child: Stack(
-                                            clipBehavior: Clip.none,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      // Height 30px aligning with active dock tile
+                                      SizedBox(
+                                        height: 30,
+                                        child: Center(
+                                          child: Transform.scale(
+                                            scale: iconScale,
                                             alignment: Alignment.center,
-                                            children: [
-                                              Icon(
-                                                directFactor > 0.5
-                                                    ? item.activeIcon
-                                                    : item.icon,
-                                                size: 20,
-                                                color: itemColor,
-                                              ),
-                                              if (badge != null && badge > 0)
-                                                Positioned(
-                                                  top: -4,
-                                                  right: -10,
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(
-                                                      horizontal: 4.5,
-                                                      vertical: 1,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(0xFF334155),
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.black.withOpacity(0.12),
-                                                          blurRadius: 3,
-                                                          offset: const Offset(0, 1),
+                                            child: Stack(
+                                              clipBehavior: Clip.none,
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Icon(
+                                                  directFactor > 0.5
+                                                      ? item.activeIcon
+                                                      : item.icon,
+                                                  size: 20,
+                                                  color: iconColor,
+                                                ),
+                                                if (badge != null && badge > 0)
+                                                  Positioned(
+                                                    top: -3,
+                                                    right: -8,
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(
+                                                        horizontal: 4,
+                                                        vertical: 1,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(0xFFEF4444),
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.black.withOpacity(0.18),
+                                                            blurRadius: 3,
+                                                            offset: const Offset(0, 1),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Text(
+                                                        badge > 99 ? '99+' : '$badge',
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 8.5,
+                                                          fontWeight: FontWeight.w700,
+                                                          height: 1.1,
                                                         ),
-                                                      ],
-                                                    ),
-                                                    child: Text(
-                                                      badge > 99 ? '99+' : '$badge',
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 9,
-                                                        fontWeight: FontWeight.w700,
-                                                        height: 1.1,
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Transform.scale(
-                                          scale: labelScale,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            item.label,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontFamily: 'Inter',
-                                              fontSize: 10,
-                                              height: 1.0,
-                                              leadingDistribution:
-                                                  TextLeadingDistribution.even,
-                                              fontWeight: fontWeight,
-                                              color: itemColor,
-                                              letterSpacing: -0.1,
-                                              backgroundColor: Colors.transparent,
+                                              ],
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Transform.scale(
+                                        scale: labelScale,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          item.label,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 9.5,
+                                            height: 1.0,
+                                            leadingDistribution:
+                                                TextLeadingDistribution.even,
+                                            fontWeight: fontWeight,
+                                            color: labelColor,
+                                            letterSpacing: -0.1,
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      // Iconic macOS dock active indicator dot
+                                      AnimatedOpacity(
+                                        opacity: isActive ? 1.0 : 0.0,
+                                        duration: const Duration(milliseconds: 180),
+                                        child: Container(
+                                          width: 4,
+                                          height: 4,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: const Color(0xFF16A34A),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color(0xFF16A34A).withOpacity(0.5),
+                                                blurRadius: 4,
+                                                spreadRadius: 0.5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -391,41 +394,40 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 
 // ─────────────────────────────────────────────
-// Liquid Glass Shell
-// Ultra-clean frosted glass capsule with pure downward ambient shadow
-// Completely eliminates any upper gray border, seam, or upward shadow bleed.
+// macOS Translucent Glass Dock Shell
+// Floating centered rounded glass dock with frosted blur and ambient elevation
 // ─────────────────────────────────────────────
-class _DoubleGlassShell extends StatelessWidget {
+class _MacOsDockShell extends StatelessWidget {
   final Widget child;
-  const _DoubleGlassShell({required this.child});
+  const _MacOsDockShell({required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Ultra-clean ambient elevation: soft, luminous depth with zero dark slate or gray cast
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
-          // Soft brand emerald ambient glow
+          // Soft ambient drop shadow
           BoxShadow(
-            color: const Color(0xFF16A34A).withOpacity(0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.09),
+            blurRadius: 22,
+            offset: const Offset(0, 8),
             spreadRadius: -2,
           ),
-          // Ultra-soft neutral ambient drop
+          // Subtle inner depth
           BoxShadow(
-            color: Colors.black.withOpacity(0.035),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-            spreadRadius: -2,
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          // Specular top light reflection
+          // Specular top rim highlight
           BoxShadow(
             color: Colors.white.withOpacity(0.85),
             blurRadius: 1,
@@ -435,32 +437,32 @@ class _DoubleGlassShell extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(22),
         clipBehavior: Clip.antiAlias,
         child: BackdropFilter(
           // Optical background blur
-          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
           child: Container(
-            height: 60,
+            height: 62,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              // Luminous frosted white glass: bright, clean, zero gray darkening from background text
+              borderRadius: BorderRadius.circular(22),
+              // macOS frosted translucent glass
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withOpacity(0.92),
-                  Colors.white.withOpacity(0.82),
+                  Colors.white.withOpacity(0.72),
+                  Colors.white.withOpacity(0.52),
                 ],
               ),
-              // Pure white rim border — crisp and luminous
+              // Crisp macOS hairline border
               border: Border.all(
-                color: Colors.white.withOpacity(0.95),
-                width: 1.0,
+                color: Colors.white.withOpacity(0.80),
+                width: 0.85,
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: child,
             ),
           ),
