@@ -161,7 +161,8 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
         left: false,
         right: false,
         bottom: true,
-        child: Center(
+        child: Align(
+          alignment: Alignment.bottomCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: Padding(
