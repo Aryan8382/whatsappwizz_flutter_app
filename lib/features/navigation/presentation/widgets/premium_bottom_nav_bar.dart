@@ -194,34 +194,99 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                           // ─── Active Pill Covering Both Icon & Label ───
                           Positioned(
                             left: tileLeft,
-                            top: 5.0,
-                            bottom: 5.0,
+                            top: 4.5,
+                            bottom: 4.5,
                             width: tileWidth,
                             child: AnimatedScale(
                               scale: _isDragging ? 1.04 : 1.0,
                               duration: const Duration(milliseconds: 160),
                               curve: Curves.easeOutCubic,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.white.withOpacity(0.75),
-                                  border: Border.all(
-                                    color: const Color(0xFF16A34A).withOpacity(0.28),
-                                    width: 1.0,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      // Transparent luminous glass body with soft emerald sheen
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.white.withOpacity(0.65),
+                                          const Color(0xFFDCFCE7).withOpacity(0.35),
+                                          Colors.white.withOpacity(0.25),
+                                        ],
+                                        stops: const [0.0, 0.45, 1.0],
+                                      ),
+                                      // Crisp inner specular highlight border
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.90),
+                                        width: 1.1,
+                                      ),
+                                      boxShadow: [
+                                        // Outside soft emerald ambient glow
+                                        BoxShadow(
+                                          color: const Color(0xFF16A34A).withOpacity(0.20),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 3.5),
+                                          spreadRadius: -1,
+                                        ),
+                                        // Outside soft neutral drop
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.04),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                        // Outside top specular reflection
+                                        BoxShadow(
+                                          color: Colors.white.withOpacity(0.85),
+                                          blurRadius: 2,
+                                          offset: const Offset(0, -1),
+                                          spreadRadius: 0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        // ── Inside Top Highlight (Specular Glint) ──
+                                        Align(
+                                          alignment: Alignment.topCenter,
+                                          child: Container(
+                                            height: 1.5,
+                                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(1),
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.white.withOpacity(0.0),
+                                                  Colors.white.withOpacity(0.95),
+                                                  Colors.white.withOpacity(0.0),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // ── Inside Bottom Soft Emerald Glow ──
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Container(
+                                            height: 1.0,
+                                            margin: const EdgeInsets.symmetric(horizontal: 12),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.transparent,
+                                                  const Color(0xFF16A34A).withOpacity(0.25),
+                                                  Colors.transparent,
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.04),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                    BoxShadow(
-                                      color: const Color(0xFF16A34A).withOpacity(0.12),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 3),
-                                      spreadRadius: -1,
-                                    ),
-                                  ],
                                 ),
                               ),
                             ),
@@ -282,58 +347,52 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      // Height 30px aligning with active dock tile
-                                      SizedBox(
-                                        height: 30,
-                                        child: Center(
-                                          child: Transform.scale(
-                                            scale: iconScale,
-                                            alignment: Alignment.center,
-                                            child: Stack(
-                                              clipBehavior: Clip.none,
-                                              alignment: Alignment.center,
-                                              children: [
-                                                Icon(
-                                                  directFactor > 0.5
-                                                      ? item.activeIcon
-                                                      : item.icon,
-                                                  size: 20,
-                                                  color: iconColor,
-                                                ),
-                                                if (badge != null && badge > 0)
-                                                  Positioned(
-                                                    top: -3,
-                                                    right: -8,
-                                                    child: Container(
-                                                      padding: const EdgeInsets.symmetric(
-                                                        horizontal: 4,
-                                                        vertical: 1,
+                                      Transform.scale(
+                                        scale: iconScale,
+                                        alignment: Alignment.center,
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          alignment: Alignment.center,
+                                          children: [
+                                            Icon(
+                                              directFactor > 0.5
+                                                  ? item.activeIcon
+                                                  : item.icon,
+                                              size: 20,
+                                              color: iconColor,
+                                            ),
+                                            if (badge != null && badge > 0)
+                                              Positioned(
+                                                top: -3,
+                                                right: -8,
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(
+                                                    horizontal: 4,
+                                                    vertical: 1,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xFFEF4444),
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black.withOpacity(0.18),
+                                                        blurRadius: 3,
+                                                        offset: const Offset(0, 1),
                                                       ),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(0xFFEF4444),
-                                                        borderRadius: BorderRadius.circular(10),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.black.withOpacity(0.18),
-                                                            blurRadius: 3,
-                                                            offset: const Offset(0, 1),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: Text(
-                                                        badge > 99 ? '99+' : '$badge',
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 8.5,
-                                                          fontWeight: FontWeight.w700,
-                                                          height: 1.1,
-                                                        ),
-                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Text(
+                                                    badge > 99 ? '99+' : '$badge',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8.5,
+                                                      fontWeight: FontWeight.w700,
+                                                      height: 1.1,
                                                     ),
                                                   ),
-                                              ],
-                                            ),
-                                          ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(height: 3),
@@ -346,7 +405,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontFamily: 'Inter',
-                                            fontSize: 10,
+                                            fontSize: 9.5,
                                             height: 1.0,
                                             leadingDistribution:
                                                 TextLeadingDistribution.even,
