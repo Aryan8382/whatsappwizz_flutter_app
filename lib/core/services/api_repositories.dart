@@ -1,0 +1,24 @@
+// All real API repositories — mirrors backend controllers exactly
+export 'repositories/contacts_api_repository.dart';
+export 'repositories/segments_api_repository.dart';
+export 'repositories/templates_api_repository.dart';
+export 'repositories/template_library_api_repository.dart';
+export 'repositories/campaigns_api_repository.dart';
+export 'repositories/automation_api_repository.dart';
+export 'repositories/chatbot_api_repository.dart';
+export 'repositories/flows_api_repository.dart';
+export 'repositories/custom_fields_api_repository.dart';
+export 'repositories/dnd_api_repository.dart';
+export 'repositories/media_api_repository.dart';
+export 'repositories/upload_api_repository.dart';
+export 'repositories/messages_api_repository.dart';
+export 'repositories/messenger_api_repository.dart';
+export 'repositories/conversations_api_repository.dart';
+export 'repositories/users_api_repository.dart';
+export 'repositories/wallet_api_repository.dart';
+export 'repositories/reports_api_repository.dart';
+export 'repositories/dashboard_api_repository.dart';
+export 'repositories/organization_api_repository.dart';
+export 'repositories/waba_api_repository.dart';
+export 'repositories/api_keys_api_repository.dart';
+export 'repositories/webhooks_api_repository.dart';
