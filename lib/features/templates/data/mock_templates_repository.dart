@@ -10,7 +10,7 @@ class MockTemplatesRepository implements TemplatesRepository {
       category: 'MARKETING',
       headerType: 'TEXT',
       headerText: 'Welcome to Our Community!',
-      body: 'Hi {{1}}, welcome to Demo Company! Enjoy your day and check out our new catalog.',
+      body: 'Hi {{1}}, welcome to our community! Enjoy your day and check out our new catalog.',
       footer: 'Reply STOP to unsubscribe',
       buttons: ['View Catalog', 'Talk to Agent'],
       status: TemplateStatus.approved,

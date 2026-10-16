@@ -64,7 +64,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     super.initState();
     _orgNameController = TextEditingController(text: 'Talelight Media');
     _orgSlugController = TextEditingController(text: 'talelight');
-    _orgEmailController = TextEditingController(text: 'admin@demo.com');
+    _orgEmailController = TextEditingController(text: '');
     _orgPhoneController = TextEditingController(text: '+91 76239 83591');
     _orgLogoController = TextEditingController(text: '');
     _orgWebsiteController = TextEditingController(text: 'https://whatsappwiz.io');

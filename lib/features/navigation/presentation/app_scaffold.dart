@@ -8,7 +8,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../auth/domain/user.dart';
 import '../../auth/presentation/auth_controller.dart';
 import 'more_drawer.dart';
 import 'navigation_progress.dart';
@@ -110,34 +109,6 @@ class _AppScaffoldState extends ConsumerState<AppScaffold> with WidgetsBindingOb
     }
   }
 
-  void _showRoleSwitchDialog(User user) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: AppRadii.border3xl),
-        title: const Text('Switch Role (Demo Testing)', style: AppTypography.titleMedium),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: UserRole.values.map((role) {
-            final isSelected = user.role == role;
-            return ListTile(
-              leading: Icon(
-                isSelected ? AppIcons.checkCircle : AppIcons.shield,
-                color: isSelected ? AppColors.g600 : AppColors.textMuted,
-                size: 20,
-              ),
-              title: Text(role.displayName),
-              subtitle: Text(role.value, style: const TextStyle(fontSize: 11)),
-              onTap: () {
-                ref.read(authControllerProvider.notifier).switchRoleForDemo(role);
-                Navigator.of(ctx).pop();
-              },
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -383,12 +354,12 @@ class _AppScaffoldState extends ConsumerState<AppScaffold> with WidgetsBindingOb
                                     ),
                                     const PopupMenuDivider(),
                                     PopupMenuItem(
-                                      value: 'role',
+                                      enabled: false,
                                       child: Row(
                                         children: [
                                           const Icon(AppIcons.shield, size: 18, color: AppColors.g700),
                                           const SizedBox(width: 10),
-                                          Text('Role: ${user.role.displayName}'),
+                                          Text('Role: ${user.role.displayName}', style: const TextStyle(color: AppColors.textPrimary)),
                                         ],
                                       ),
                                     ),
@@ -414,9 +385,7 @@ class _AppScaffoldState extends ConsumerState<AppScaffold> with WidgetsBindingOb
                                     ),
                                   ],
                                   onSelected: (val) {
-                                    if (val == 'role') {
-                                      _showRoleSwitchDialog(user);
-                                    } else if (val == 'settings') {
+                                    if (val == 'settings') {
                                       context.push('/settings');
                                     } else if (val == 'logout') {
                                       ref.read(authControllerProvider.notifier).logout();

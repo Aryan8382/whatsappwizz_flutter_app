@@ -12,7 +12,6 @@ import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/animated_entrance.dart';
 import '../../../shared/widgets/server_switcher_sheet.dart';
-import '../domain/user.dart';
 import 'auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -24,8 +23,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: AppConstants.demoAdminEmail);
-  final _passwordController = TextEditingController(text: AppConstants.demoAdminPassword);
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
@@ -33,13 +32,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  void _fillDemo(String email, String password) {
-    setState(() {
-      _emailController.text = email;
-      _passwordController.text = password;
-    });
   }
 
   String _serverLabel(String host) {
@@ -244,7 +236,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                                 onServerChanged: () => setState(() {}),
                                               ),
                                               child: const Text(
-                                                '⚙️ Tap to switch to Local Wi-Fi or update Server URL',
+                                                'âš™ï¸ Tap to switch to Local Wi-Fi or update Server URL',
                                                 style: TextStyle(
                                                   color: AppColors.g800,
                                                   fontSize: 11.5,
@@ -352,90 +344,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                                 letterSpacing: 0.2,
                                               ),
                                             ),
-                                    ),
-                                    SizedBox(height: sectionSpacing),
-
-                                    // Demo Credentials Helper
-                                    Container(
-                                      padding: EdgeInsets.all(isCompact ? 10 : 12),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.g50,
-                                        borderRadius: AppRadii.borderLg,
-                                        border: Border.all(color: AppColors.g200),
                                       ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const Icon(AppIcons.info,
-                                                  size: 15, color: AppColors.g700),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                '1-Tap Demo Credentials',
-                                                style: AppTypography.labelSmall.copyWith(
-                                                  color: AppColors.g800,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            spacing: 6,
-                                            runSpacing: 6,
-                                            children: [
-                                              _DemoChip(
-                                                label: 'Admin',
-                                                role: UserRole.orgAdmin,
-                                                isSelected: _emailController.text == AppConstants.demoAdminEmail,
-                                                onTap: () => _fillDemo(
-                                                  AppConstants.demoAdminEmail,
-                                                  AppConstants.demoAdminPassword,
-                                                ),
-                                              ),
-                                              _DemoChip(
-                                                label: 'Supervisor',
-                                                role: UserRole.supervisor,
-                                                isSelected: _emailController.text == AppConstants.demoSupervisorEmail,
-                                                onTap: () => _fillDemo(
-                                                  AppConstants.demoSupervisorEmail,
-                                                  AppConstants.demoSupervisorPassword,
-                                                ),
-                                              ),
-                                              _DemoChip(
-                                                label: 'Agent',
-                                                role: UserRole.agent,
-                                                isSelected: _emailController.text == AppConstants.demoAgentEmail,
-                                                onTap: () => _fillDemo(
-                                                  AppConstants.demoAgentEmail,
-                                                  AppConstants.demoAgentPassword,
-                                                ),
-                                              ),
-                                              _DemoChip(
-                                                label: 'Reseller',
-                                                role: UserRole.reseller,
-                                                isSelected: _emailController.text == AppConstants.demoResellerEmail,
-                                                onTap: () => _fillDemo(
-                                                  AppConstants.demoResellerEmail,
-                                                  AppConstants.demoResellerPassword,
-                                                ),
-                                              ),
-                                              _DemoChip(
-                                                label: 'Super Admin',
-                                                role: UserRole.superAdmin,
-                                                isSelected: _emailController.text == AppConstants.demoSuperAdminEmail,
-                                                onTap: () => _fillDemo(
-                                                  AppConstants.demoSuperAdminEmail,
-                                                  AppConstants.demoSuperAdminPassword,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                    ],
                                 ),
                               ),
                             ),
@@ -454,52 +364,4 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-class _DemoChip extends StatelessWidget {
-  final String label;
-  final UserRole role;
-  final bool isSelected;
-  final VoidCallback onTap;
 
-  const _DemoChip({
-    required this.label,
-    required this.role,
-    this.isSelected = false,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedPressable(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: AppAnimations.fast,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5.5),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.g600 : Colors.white,
-          borderRadius: AppRadii.borderFull,
-          border: Border.all(
-            color: isSelected ? AppColors.g600 : AppColors.g300,
-            width: isSelected ? 1.4 : 1.0,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.g600.withOpacity(0.25),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-            color: isSelected ? Colors.white : AppColors.g800,
-          ),
-        ),
-      ),
-    );
-  }
-}

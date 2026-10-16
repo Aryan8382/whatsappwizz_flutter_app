@@ -25,7 +25,7 @@ class BotTestSheet extends StatefulWidget {
 
 class _BotTestSheetState extends State<BotTestSheet> {
   final List<Map<String, String>> _messages = [
-    {'sender': 'bot', 'text': 'Hi! Welcome to Demo Store. How can we help you today?'},
+    {'sender': 'bot', 'text': 'Hi! Welcome to our store. How can we help you today?'},
     {'sender': 'bot', 'text': 'Select an option: 1. Catalog, 2. Speak with Agent, 3. FAQs'},
   ];
   final _inputController = TextEditingController();
@@ -46,7 +46,7 @@ class _BotTestSheetState extends State<BotTestSheet> {
         if (text.toLowerCase().contains('catalog') || text == '1') {
           _messages.add({
             'sender': 'bot',
-            'text': 'Browse our latest collection at https://demo.store/catalog'
+            'text': 'Browse our latest product collection and catalog.'
           });
         } else if (text.toLowerCase().contains('agent') || text == '2') {
           _messages.add({

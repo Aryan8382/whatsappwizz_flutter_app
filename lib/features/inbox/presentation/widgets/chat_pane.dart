@@ -207,7 +207,7 @@ class _ChatPaneState extends State<ChatPane> {
     if (!mounted) return;
     if (agent != null) {
       widget.onAssignAgent(agent);
-      final myName = widget.currentUserName ?? 'Demo Admin';
+      final myName = widget.currentUserName ?? 'Admin';
       final isMe = agent.toLowerCase() == myName.toLowerCase() || agent.toLowerCase() == 'you';
       if (agent.isEmpty) {
         ToastService.info('Chat unassigned');
@@ -222,7 +222,7 @@ class _ChatPaneState extends State<ChatPane> {
   @override
   Widget build(BuildContext context) {
     final conv = widget.conversation;
-    final myName = widget.currentUserName ?? 'Demo Admin';
+    final myName = widget.currentUserName ?? 'Admin';
     final assignedAgent = conv.assignedAgentName;
     final cleanAgent = assignedAgent?.trim() ?? '';
     final isAssigned = cleanAgent.isNotEmpty &&

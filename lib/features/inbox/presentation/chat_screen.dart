@@ -29,7 +29,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final inboxState = ref.watch(inboxControllerProvider);
     final authState = ref.watch(authControllerProvider);
     final notifier = ref.read(inboxControllerProvider.notifier);
-    final myName = authState.user?.fullName ?? 'Demo Admin';
+    final myName = authState.user?.fullName ?? 'Admin';
 
     if (inboxState.conversations.isEmpty) {
       return const Scaffold(

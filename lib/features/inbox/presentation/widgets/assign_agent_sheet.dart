@@ -17,10 +17,10 @@ class AssignAgentSheet extends StatelessWidget {
   });
 
   static const List<String> agents = [
-    'Demo Admin',
-    'Demo Supervisor',
-    'Demo Agent',
-    'Demo Reseller',
+    'Admin',
+    'Supervisor',
+    'Agent',
+    'Reseller',
   ];
 
   static Future<String?> show(BuildContext context, String? currentAgent, {String? currentUserName}) {
@@ -42,7 +42,7 @@ class AssignAgentSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myName = currentUserName ?? 'Demo Admin';
+    final myName = currentUserName ?? 'Admin';
 
     return Column(
       mainAxisSize: MainAxisSize.min,

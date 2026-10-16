@@ -276,113 +276,6 @@ class _MoreDrawerState extends ConsumerState<MoreDrawer> {
     ),
   ];
 
-  void _showRoleSwitcherSheet(BuildContext context) {
-    HapticFeedback.mediumImpact();
-    final currentRole = widget.currentUser?.role ?? UserRole.agent;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.g200,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.g100,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(LucideIcons.userCheck, size: 20, color: AppColors.g800),
-                ),
-                const SizedBox(width: 12),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Switch Demo Role', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text('Simulate role-based access in sidebar', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...UserRole.values.map((r) {
-              final isSelected = r == currentRole;
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.g50 : Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected ? AppColors.g500 : AppColors.g200,
-                    width: isSelected ? 1.5 : 1,
-                  ),
-                ),
-                child: ListTile(
-                  dense: true,
-                  title: Text(
-                    r.displayName,
-                    style: TextStyle(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                      color: isSelected ? AppColors.g900 : AppColors.textPrimary,
-                    ),
-                  ),
-                  subtitle: Text(
-                    _getRoleDescription(r),
-                    style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                  ),
-                  trailing: isSelected
-                      ? const Icon(Icons.check_circle_rounded, color: AppColors.g600, size: 20)
-                      : null,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    ref.read(authControllerProvider.notifier).switchRoleForDemo(r);
-                    Navigator.of(ctx).pop();
-                    ToastService.success('Switched to ${r.displayName} mode');
-                  },
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _getRoleDescription(UserRole role) {
-    switch (role) {
-      case UserRole.superAdmin:
-        return 'Full access across all organizations & system settings';
-      case UserRole.orgAdmin:
-        return 'Manage organization users, billing, API & bots';
-      case UserRole.supervisor:
-        return 'Monitor team conversations, templates & campaigns';
-      case UserRole.agent:
-        return 'Chat with assigned contacts and live customer inbox';
-      case UserRole.reseller:
-        return 'Manage sub-accounts and credits';
-    }
-  }
 
   void _confirmLogout(BuildContext context) {
     HapticFeedback.mediumImpact();
@@ -713,23 +606,6 @@ class _MoreDrawerState extends ConsumerState<MoreDrawer> {
                             ],
                           ),
                         ],
-                      ),
-                    ),
-                    // Quick Role Switcher Button
-                    InkWell(
-                      onTap: () => _showRoleSwitcherSheet(context),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.16),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.swap_horiz_rounded,
-                          size: 16,
-                          color: Colors.white,
-                        ),
                       ),
                     ),
                   ],
