@@ -41,53 +41,124 @@ class TemplatesScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 480;
+                if (isCompact) {
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Templates', style: AppTypography.displayMedium),
-                      Text('Meta approved message templates', style: AppTypography.bodySmall),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Meta approved message templates',
+                        style: AppTypography.bodySmall,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                ToastService.info('Syncing templates with Meta WABA...');
+                                await repo.syncWithMeta();
+                                ref.invalidate(templatesProvider);
+                                ToastService.success('Templates synchronized with Meta');
+                              },
+                              icon: const Icon(AppIcons.sync, size: 15),
+                              label: const Text('Sync Meta', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                TemplateBuilderSheet.show(
+                                  context,
+                                  onSave: (tpl) async {
+                                    await repo.createTemplate(tpl);
+                                    ref.invalidate(templatesProvider);
+                                    ToastService.success('Template draft created');
+                                  },
+                                );
+                              },
+                              icon: const Icon(AppIcons.add, size: 16),
+                              label: const Text('New Template', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.g600,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                elevation: 0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                OutlinedButton.icon(
-                  onPressed: () async {
-                    ToastService.info('Syncing templates with Meta WABA...');
-                    await repo.syncWithMeta();
-                    ref.invalidate(templatesProvider);
-                    ToastService.success('Templates synchronized with Meta');
-                  },
-                  icon: const Icon(AppIcons.sync, size: 15),
-                  label: const Text('Sync Meta', style: TextStyle(fontSize: 12)),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    TemplateBuilderSheet.show(
-                      context,
-                      onSave: (tpl) async {
-                        await repo.createTemplate(tpl);
+                  );
+                }
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Templates', style: AppTypography.displayMedium),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Meta approved message templates',
+                            style: AppTypography.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        ToastService.info('Syncing templates with Meta WABA...');
+                        await repo.syncWithMeta();
                         ref.invalidate(templatesProvider);
-                        ToastService.success('Template draft created');
+                        ToastService.success('Templates synchronized with Meta');
                       },
-                    );
-                  },
-                  icon: const Icon(AppIcons.add, size: 16),
-                  label: const Text('New Template', style: TextStyle(fontSize: 12)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.g600,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                ),
-              ],
+                      icon: const Icon(AppIcons.sync, size: 15),
+                      label: const Text('Sync Meta', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        TemplateBuilderSheet.show(
+                          context,
+                          onSave: (tpl) async {
+                            await repo.createTemplate(tpl);
+                            ref.invalidate(templatesProvider);
+                            ToastService.success('Template draft created');
+                          },
+                        );
+                      },
+                      icon: const Icon(AppIcons.add, size: 16),
+                      label: const Text('New Template', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.g600,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 0,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
 
