@@ -61,109 +61,47 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
         _currency = walletData['currency'].toString();
       }
       final txList = await _repo.getTransactions();
-      if (txList.isNotEmpty) {
-        _transactions.clear();
-        for (final item in txList) {
-          final amt = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
-          _transactions.add({
-            'id': item['id'],
-            'wallet_id': item['walletId'],
-            'title': _formatTxTitle(item),
-            'description': item['description']?.toString() ?? '',
-            'amount': amt,
-            'type': item['type']?.toString() ?? (amt >= 0 ? 'credit' : 'debit'),
-            'reference_id': item['reference']?.toString() ?? '',
-            'created_at': DateTime.tryParse(item['createdAt']?.toString() ?? '') ?? DateTime.now(),
-          });
-        }
+      _transactions.clear();
+      for (final item in txList) {
+        final amt = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
+        _transactions.add({
+          'id': item['id'],
+          'wallet_id': item['walletId'],
+          'title': _formatTxTitle(item),
+          'description': item['description']?.toString() ?? '',
+          'amount': amt,
+          'type': item['type']?.toString() ?? (amt >= 0 ? 'credit' : 'debit'),
+          'reference_id': item['reference']?.toString() ?? '',
+          'created_at': DateTime.tryParse(item['createdAt']?.toString() ?? '') ?? DateTime.now(),
+        });
+      }
+
+      final invList = await _repo.getInvoices();
+      _invoices.clear();
+      for (final item in invList) {
+        final total = double.tryParse(item['total']?.toString() ?? item['amount']?.toString() ?? '0') ?? 0.0;
+        final base = double.tryParse(item['subtotal']?.toString() ?? item['base_amount']?.toString() ?? '0') ?? total;
+        final tax = double.tryParse(item['tax']?.toString() ?? item['gst_amount']?.toString() ?? '0') ?? 0.0;
+        _invoices.add({
+          'id': item['id'],
+          'invoice_number': item['invoiceNumber']?.toString() ?? item['invoice_number']?.toString() ?? 'INV-${item['id']}',
+          'amount': total,
+          'base_amount': base,
+          'gst_amount': tax,
+          'status': item['status']?.toString() ?? 'paid',
+          'razorpay_order_id': item['razorpayOrderId']?.toString() ?? '',
+          'razorpay_payment_id': item['razorpayPaymentId']?.toString() ?? '',
+          'paid_at': DateTime.tryParse(item['createdAt']?.toString() ?? '') ?? DateTime.now(),
+          'created_at': DateTime.tryParse(item['createdAt']?.toString() ?? '') ?? DateTime.now(),
+        });
       }
     } catch (_) {}
     if (mounted) setState(() => _isLoading = false);
   }
 
-  // DB Table: wallet_transactions
-  final List<Map<String, dynamic>> _transactions = [
-    {
-      'id': 104,
-      'wallet_id': 1,
-      'title': 'Wallet Recharge (Razorpay)',
-      'description': 'Online top-up via UPI / Netbanking',
-      'amount': 2000.00,
-      'type': 'credit',
-      'reference_id': 'pay_Oz7K19xP2la98q',
-      'created_at': DateTime.now().subtract(const Duration(hours: 3)),
-    },
-    {
-      'id': 103,
-      'wallet_id': 1,
-      'title': 'Campaign Deduction: Diwali Mega Sale',
-      'description': 'Marketing messages delivery charge (580 recipients)',
-      'amount': -452.40,
-      'type': 'debit',
-      'reference_id': 'camp_diwali_2026_01',
-      'created_at': DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-    },
-    {
-      'id': 102,
-      'wallet_id': 1,
-      'title': 'Utility Template Charges',
-      'description': 'Order confirmation & OTP utility notifications (140 msgs)',
-      'amount': -49.00,
-      'type': 'debit',
-      'reference_id': 'batch_util_9921',
-      'created_at': DateTime.now().subtract(const Duration(days: 3)),
-    },
-    {
-      'id': 101,
-      'wallet_id': 1,
-      'title': 'Opening Balance Credit',
-      'description': 'Initial account provisioning bonus',
-      'amount': 3501.40,
-      'type': 'credit',
-      'reference_id': 'sys_credit_signup',
-      'created_at': DateTime.now().subtract(const Duration(days: 7)),
-    },
-  ];
-
-  // DB Table: invoices
-  final List<Map<String, dynamic>> _invoices = [
-    {
-      'id': 12,
-      'invoice_number': 'INV-2026-092',
-      'amount': 2360.00,
-      'base_amount': 2000.00,
-      'gst_amount': 360.00,
-      'status': 'paid',
-      'razorpay_order_id': 'order_Oz7K18a09L2k1',
-      'razorpay_payment_id': 'pay_Oz7K19xP2la98q',
-      'paid_at': DateTime.now().subtract(const Duration(hours: 3)),
-      'created_at': DateTime.now().subtract(const Duration(hours: 3, minutes: 10)),
-    },
-    {
-      'id': 11,
-      'invoice_number': 'INV-2026-081',
-      'amount': 5900.00,
-      'base_amount': 5000.00,
-      'gst_amount': 900.00,
-      'status': 'paid',
-      'razorpay_order_id': 'order_Ny5T89b12P3q1',
-      'razorpay_payment_id': 'pay_Ny5T90c23Q4r2',
-      'paid_at': DateTime.now().subtract(const Duration(days: 14)),
-      'created_at': DateTime.now().subtract(const Duration(days: 14)),
-    },
-    {
-      'id': 10,
-      'invoice_number': 'INV-2026-070',
-      'amount': 2950.00,
-      'base_amount': 2500.00,
-      'gst_amount': 450.00,
-      'status': 'paid',
-      'razorpay_order_id': 'order_Mx4S78a01O2p0',
-      'razorpay_payment_id': 'pay_Mx4S79b12P3q1',
-      'paid_at': DateTime.now().subtract(const Duration(days: 35)),
-      'created_at': DateTime.now().subtract(const Duration(days: 35)),
-    },
-  ];
+  // Real DB data: initialized empty, populated from backend API
+  final List<Map<String, dynamic>> _transactions = [];
+  final List<Map<String, dynamic>> _invoices = [];
 
   @override
   void initState() {
@@ -586,72 +524,112 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
           controller: _tabController,
           children: [
             // Tab 1: Transactions
-            ListView.separated(
-              padding: const EdgeInsets.fromLTRB(16, 6, 16, 120),
-              itemCount: _transactions.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final tx = _transactions[index];
-                final isCredit = tx['type'] == 'credit';
+            _transactions.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(AppIcons.wallet, size: 48, color: AppColors.textMuted.withOpacity(0.4)),
+                          const SizedBox(height: 12),
+                          const Text('No transactions yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Real credits and deductions will appear here automatically',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(16, 6, 16, 120),
+                    itemCount: _transactions.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final tx = _transactions[index];
+                      final isCredit = tx['type'] == 'credit';
 
-                return FadeSlideIn.staggered(
-                  index: index,
-                  child: InkWell(
-                    onTap: () => _showTransactionDetails(tx),
-                    borderRadius: AppRadii.borderXl,
-                    child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: AppRadii.borderXl,
-                      border: Border.all(color: const Color(0x3322C55E)),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: isCredit ? AppColors.statusGreenBg : Colors.grey[100],
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isCredit ? LucideIcons.arrowDownLeft : LucideIcons.arrowUpRight,
-                            size: 16,
-                            color: isCredit ? AppColors.statusGreenText : Colors.grey[700],
+                      return FadeSlideIn.staggered(
+                        index: index,
+                        child: InkWell(
+                          onTap: () => _showTransactionDetails(tx),
+                          borderRadius: AppRadii.borderXl,
+                          child: Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: AppRadii.borderXl,
+                              border: Border.all(color: const Color(0x3322C55E)),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: isCredit ? AppColors.statusGreenBg : Colors.grey[100],
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    isCredit ? LucideIcons.arrowDownLeft : LucideIcons.arrowUpRight,
+                                    size: 16,
+                                    color: isCredit ? AppColors.statusGreenText : Colors.grey[700],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(tx['title'], style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'Ref: ${tx['reference_id']} • ${_formatDateTime(tx['created_at'])}',
+                                        style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  '${isCredit ? '+' : '-'} ₹${(tx['amount'] as double).abs().toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: isCredit ? AppColors.statusGreenText : const Color(0xFFDC2626),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(tx['title'], style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Ref: ${tx['reference_id']} • ${_formatDateTime(tx['created_at'])}',
-                                style: const TextStyle(fontSize: 10.5, color: AppColors.textMuted),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          '${isCredit ? '+' : '-'} ₹${(tx['amount'] as double).abs().toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.bold,
-                            color: isCredit ? AppColors.statusGreenText : const Color(0xFFDC2626),
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                ),
-                );
-              },
-            ),
 
             // Tab 2: Invoices
-            ListView.separated(
+            _invoices.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(LucideIcons.fileText, size: 48, color: AppColors.textMuted.withOpacity(0.4)),
+                          const SizedBox(height: 12),
+                          const Text('No invoices yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Recharge invoices will appear here after payments',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : ListView.separated(
               padding: const EdgeInsets.fromLTRB(16, 6, 16, 120),
               itemCount: _invoices.length,
               separatorBuilder: (_, __) => const SizedBox(height: 8),

@@ -19,7 +19,7 @@ class MockDashboardRepository implements DashboardRepository {
       costSavedInr: 11062.5,
       metaFeesCharged: 2655.0,
       windowResolutionRate: 94.2,
-      walletBalance: 5000.0,
+      walletBalance: 0.0,
       hourlyMetrics: [
         HourlyMessageMetric(hour: 0, sent: 120, received: 95),
         HourlyMessageMetric(hour: 3, sent: 40, received: 30),
