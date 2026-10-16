@@ -6,7 +6,7 @@ class AppConstants {
 
   // ─── Backend URLs ──────────────────────────────────────────────────────
   // Permanent public HTTPS backend domain (works worldwide for APK testing):
-  static const String publicBackendUrl = 'https://penalize-opt-reflex.ngrok-free.dev';
+  static const String publicBackendUrl = 'https://whatsappwiz.onrender.com';
 
   // Local fallback:
   static const String lanIp         = '192.168.29.134'; // Your PC WiFi IP
