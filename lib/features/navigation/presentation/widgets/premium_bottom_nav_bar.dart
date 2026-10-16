@@ -452,25 +452,12 @@ class _MacOsDockShell extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
-          // Soft ambient drop shadow
+          // Soft subtle ambient drop shadow
           BoxShadow(
-            color: Colors.black.withOpacity(0.09),
-            blurRadius: 22,
-            offset: const Offset(0, 8),
-            spreadRadius: -2,
-          ),
-          // Subtle inner depth
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-          // Specular top rim highlight
-          BoxShadow(
-            color: Colors.white.withOpacity(0.85),
-            blurRadius: 1,
-            offset: const Offset(0, -0.5),
-            spreadRadius: 0,
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+            spreadRadius: -1,
           ),
         ],
       ),
@@ -478,25 +465,17 @@ class _MacOsDockShell extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         clipBehavior: Clip.antiAlias,
         child: BackdropFilter(
-          // Optical background blur
-          filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+          // Small optical background blur
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Container(
             height: 62,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
-              // macOS frosted translucent glass
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.white.withOpacity(0.72),
-                  Colors.white.withOpacity(0.52),
-                ],
-              ),
-              // Crisp macOS hairline border
+              // Truly transparent background without fill color
+              color: Colors.transparent,
               border: Border.all(
-                color: Colors.white.withOpacity(0.80),
-                width: 0.85,
+                color: Colors.white.withOpacity(0.30),
+                width: 1.0,
               ),
             ),
             child: Padding(
