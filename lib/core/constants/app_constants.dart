@@ -28,13 +28,7 @@ class AppConstants {
 
   static String get defaultHost {
     if (_envApiUrl.isNotEmpty) return _envApiUrl;
-    if (kIsWeb) return 'http://localhost:4000';
-    if (defaultTargetPlatform == TargetPlatform.windows ||
-        defaultTargetPlatform == TargetPlatform.linux ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
-      return 'http://localhost:4000';
-    }
-    // Android APK default (works over cellular/remote):
+    // Default to the live Render backend across Web and Mobile:
     return publicBackendUrl;
   }
 
