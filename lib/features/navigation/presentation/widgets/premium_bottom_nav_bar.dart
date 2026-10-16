@@ -172,11 +172,10 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                   builder: (context, constraints) {
                     final totalWidth = constraints.maxWidth;
                     final itemWidth = totalWidth / itemCount;
-                    // Classic macOS dock active tile
-                    final tileWidth = (itemWidth - 10).clamp(38.0, 52.0);
-                    final tileLeft = (_currentPosition * itemWidth) + (itemWidth - tileWidth) / 2;
-                    const tileTop = 6.0;
-                    const tileHeight = 32.0;
+                    // Active pill covering both icon and text label
+                    const pillMarginH = 3.0;
+                    final tileWidth = itemWidth - (pillMarginH * 2);
+                    final tileLeft = (_currentPosition * itemWidth) + pillMarginH;
 
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
@@ -192,20 +191,20 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          // ─── macOS Active Dock Tile ───
+                          // ─── Active Pill Covering Both Icon & Label ───
                           Positioned(
                             left: tileLeft,
-                            top: tileTop,
+                            top: 5.0,
+                            bottom: 5.0,
                             width: tileWidth,
-                            height: tileHeight,
                             child: AnimatedScale(
-                              scale: _isDragging ? 1.06 : 1.0,
+                              scale: _isDragging ? 1.04 : 1.0,
                               duration: const Duration(milliseconds: 160),
                               curve: Curves.easeOutCubic,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(13),
-                                  color: Colors.white.withOpacity(0.65),
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white.withOpacity(0.75),
                                   border: Border.all(
                                     color: const Color(0xFF16A34A).withOpacity(0.28),
                                     width: 1.0,
@@ -337,7 +336,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 2),
+                                      const SizedBox(height: 3),
                                       Transform.scale(
                                         scale: labelScale,
                                         alignment: Alignment.center,
@@ -347,7 +346,7 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontFamily: 'Inter',
-                                            fontSize: 9.5,
+                                            fontSize: 10,
                                             height: 1.0,
                                             leadingDistribution:
                                                 TextLeadingDistribution.even,
@@ -355,27 +354,6 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                             color: labelColor,
                                             letterSpacing: -0.1,
                                             backgroundColor: Colors.transparent,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      // Iconic macOS dock active indicator dot
-                                      AnimatedOpacity(
-                                        opacity: isActive ? 1.0 : 0.0,
-                                        duration: const Duration(milliseconds: 180),
-                                        child: Container(
-                                          width: 4,
-                                          height: 4,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: const Color(0xFF16A34A),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: const Color(0xFF16A34A).withOpacity(0.5),
-                                                blurRadius: 4,
-                                                spreadRadius: 0.5,
-                                              ),
-                                            ],
                                           ),
                                         ),
                                       ),
