@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/services/api_service.dart';
 import '../../../core/theme/app_animations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
@@ -11,7 +10,6 @@ import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/animated_entrance.dart';
-import '../../../shared/widgets/server_switcher_sheet.dart';
 import 'auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -23,8 +21,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: AppConstants.demoAdminEmail);
+  final _passwordController = TextEditingController(text: AppConstants.demoAdminPassword);
   bool _obscurePassword = true;
 
   @override
@@ -34,10 +32,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  String _serverLabel(String host) {
-    if (host == AppConstants.publicBackendUrl) return 'Ngrok Cloud';
-    if (host == AppConstants.localLanUrl) return 'Local Wi-Fi';
-    return host.replaceFirst('https://', '').replaceFirst('http://', '');
+  void _fillDemo(String email, String password) {
+    setState(() {
+      _emailController.text = email;
+      _passwordController.text = password;
+    });
   }
 
   Future<void> _handleSubmit() async {
@@ -156,48 +155,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                         fontSize: isCompact ? 12 : 13,
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () => ServerSwitcherSheet.show(
-                                          context,
-                                          onServerChanged: () => setState(() {}),
-                                        ),
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.g50,
-                                            borderRadius: BorderRadius.circular(20),
-                                            border: Border.all(color: AppColors.g200),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Container(
-                                                width: 7,
-                                                height: 7,
-                                                decoration: const BoxDecoration(
-                                                  color: AppColors.statusGreenText,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                'Server: ${_serverLabel(ApiService.instance.currentHost)}',
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColors.g800,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              const Icon(Icons.arrow_drop_down, size: 16, color: AppColors.textSecondary),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
                                     SizedBox(height: sectionSpacing),
 
                                     // Error Banner
@@ -209,39 +166,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                           borderRadius: AppRadii.borderLg,
                                           border: Border.all(color: AppColors.statusRedText.withOpacity(0.3)),
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                        child: Row(
                                           children: [
-                                            Row(
-                                              children: [
-                                                const Icon(AppIcons.alertCircle,
-                                                    color: AppColors.statusRedText, size: 18),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Text(
-                                                    authState.error!,
-                                                    style: const TextStyle(
-                                                      color: AppColors.statusRedText,
-                                                      fontSize: 12.5,
-                                                      fontWeight: FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 6),
-                                            InkWell(
-                                              onTap: () => ServerSwitcherSheet.show(
-                                                context,
-                                                onServerChanged: () => setState(() {}),
-                                              ),
-                                              child: const Text(
-                                                'âš™ï¸ Tap to switch to Local Wi-Fi or update Server URL',
-                                                style: TextStyle(
-                                                  color: AppColors.g800,
-                                                  fontSize: 11.5,
-                                                  fontWeight: FontWeight.w700,
-                                                  decoration: TextDecoration.underline,
+                                            const Icon(AppIcons.alertCircle,
+                                                color: AppColors.statusRedText, size: 18),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                authState.error!,
+                                                style: const TextStyle(
+                                                  color: AppColors.statusRedText,
+                                                  fontSize: 12.5,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                             ),
@@ -344,8 +280,85 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                                 letterSpacing: 0.2,
                                               ),
                                             ),
+                                    ),
+                                    SizedBox(height: sectionSpacing),
+
+                                    // Quick Credentials Helper
+                                    Container(
+                                      padding: EdgeInsets.all(isCompact ? 10 : 12),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.g50,
+                                        borderRadius: AppRadii.borderLg,
+                                        border: Border.all(color: AppColors.g200),
                                       ),
-                                    ],
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(AppIcons.info,
+                                                  size: 15, color: AppColors.g700),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                '1-Tap Login Credentials',
+                                                style: AppTypography.labelSmall.copyWith(
+                                                  color: AppColors.g800,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Wrap(
+                                            spacing: 6,
+                                            runSpacing: 6,
+                                            children: [
+                                              _CredChip(
+                                                label: 'Admin',
+                                                isSelected: _emailController.text == AppConstants.demoAdminEmail,
+                                                onTap: () => _fillDemo(
+                                                  AppConstants.demoAdminEmail,
+                                                  AppConstants.demoAdminPassword,
+                                                ),
+                                              ),
+                                              _CredChip(
+                                                label: 'Supervisor',
+                                                isSelected: _emailController.text == AppConstants.demoSupervisorEmail,
+                                                onTap: () => _fillDemo(
+                                                  AppConstants.demoSupervisorEmail,
+                                                  AppConstants.demoSupervisorPassword,
+                                                ),
+                                              ),
+                                              _CredChip(
+                                                label: 'Agent',
+                                                isSelected: _emailController.text == AppConstants.demoAgentEmail,
+                                                onTap: () => _fillDemo(
+                                                  AppConstants.demoAgentEmail,
+                                                  AppConstants.demoAgentPassword,
+                                                ),
+                                              ),
+                                              _CredChip(
+                                                label: 'Reseller',
+                                                isSelected: _emailController.text == AppConstants.demoResellerEmail,
+                                                onTap: () => _fillDemo(
+                                                  AppConstants.demoResellerEmail,
+                                                  AppConstants.demoResellerPassword,
+                                                ),
+                                              ),
+                                              _CredChip(
+                                                label: 'Super Admin',
+                                                isSelected: _emailController.text == AppConstants.demoSuperAdminEmail,
+                                                onTap: () => _fillDemo(
+                                                  AppConstants.demoSuperAdminEmail,
+                                                  AppConstants.demoSuperAdminPassword,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -364,4 +377,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
+class _CredChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
 
+  const _CredChip({
+    required this.label,
+    this.isSelected = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedPressable(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: AppAnimations.fast,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5.5),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.g600 : Colors.white,
+          borderRadius: AppRadii.borderFull,
+          border: Border.all(
+            color: isSelected ? AppColors.g600 : AppColors.g300,
+            width: isSelected ? 1.4 : 1.0,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.g600.withOpacity(0.25),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+            color: isSelected ? Colors.white : AppColors.g800,
+          ),
+        ),
+      ),
+    );
+  }
+}

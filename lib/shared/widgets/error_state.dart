@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_radii.dart';
-import 'server_switcher_sheet.dart';
 
 class ErrorState extends StatelessWidget {
   final String message;
@@ -55,40 +54,19 @@ class ErrorState extends StatelessWidget {
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  SizedBox(
-                    height: 44,
-                    child: OutlinedButton.icon(
-                      onPressed: onRetry,
-                      icon: const Icon(AppIcons.sync, size: 16),
-                      label: const Text('Try Again', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
-                        shape: RoundedRectangleBorder(borderRadius: AppRadii.borderXl),
-                        side: const BorderSide(color: AppColors.g600, width: 1.2),
-                        foregroundColor: AppColors.g700,
-                      ),
-                    ),
+              SizedBox(
+                height: 44,
+                child: OutlinedButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(AppIcons.sync, size: 16),
+                  label: const Text('Try Again', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    shape: RoundedRectangleBorder(borderRadius: AppRadii.borderXl),
+                    side: const BorderSide(color: AppColors.g600, width: 1.2),
+                    foregroundColor: AppColors.g700,
                   ),
-                  SizedBox(
-                    height: 44,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        ServerSwitcherSheet.show(context, onServerChanged: onRetry);
-                      },
-                      icon: const Icon(Icons.dns_rounded, size: 16),
-                      label: const Text('Switch Server', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        foregroundColor: AppColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ],

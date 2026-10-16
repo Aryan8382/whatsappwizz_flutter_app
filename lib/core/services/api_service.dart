@@ -241,7 +241,7 @@ class ApiService {
       final msg = dioErr.type == DioExceptionType.connectionTimeout
           ? 'Connection timed out. Server unreachable.'
           : (dioErr.type == DioExceptionType.connectionError
-              ? 'Cannot connect to backend server. Verify WiFi or Ngrok.'
+              ? 'Cannot connect to backend server. Please check your network connection.'
               : dioErr.message ?? 'Network error ($statusCode)');
       throw ApiException(msg, statusCode);
     }
