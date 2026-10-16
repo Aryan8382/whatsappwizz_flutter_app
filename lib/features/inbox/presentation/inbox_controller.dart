@@ -219,9 +219,13 @@ class InboxNotifier extends StateNotifier<InboxState> {
 
   void _startLiveAutoRefresh() {
     _liveRefreshTimer?.cancel();
-    // Fallback poll every 5s (Socket.IO handles instant updates)
-    _liveRefreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    // Fast live poll every 2s for snappy updates
+    _liveRefreshTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       loadConversations(silent: true);
+      final activeId = state.activeConversationId;
+      if (activeId != null) {
+        loadMessages(activeId, silent: true);
+      }
     });
   }
 
