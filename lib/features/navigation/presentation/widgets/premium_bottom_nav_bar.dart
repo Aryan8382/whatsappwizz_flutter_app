@@ -307,15 +307,15 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                             final directFactor = (1.0 - dist).clamp(0.0, 1.0);
                             final isActive = directFactor > 0.45;
 
-                            // Classic macOS active indicator and colors
+                            // Inactive icons/labels in white transitioning to emerald green when active
                             final iconColor = Color.lerp(
-                              const Color(0xFF64748B),
+                              Colors.white,
                               const Color(0xFF16A34A),
                               math.pow(directFactor, 1.2).toDouble(),
                             )!;
 
                             final labelColor = Color.lerp(
-                              const Color(0xFF64748B),
+                              Colors.white,
                               const Color(0xFF15803D),
                               math.pow(proximity, 1.2).toDouble(),
                             )!;
@@ -360,6 +360,13 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                                   : item.icon,
                                               size: 20,
                                               color: iconColor,
+                                              shadows: [
+                                                Shadow(
+                                                  color: Colors.black.withOpacity(0.20),
+                                                  blurRadius: 2,
+                                                  offset: const Offset(0, 0.5),
+                                                ),
+                                              ],
                                             ),
                                             if (badge != null && badge > 0)
                                               Positioned(
@@ -413,6 +420,13 @@ class _PremiumBottomNavBarState extends State<PremiumBottomNavBar>
                                             color: labelColor,
                                             letterSpacing: -0.1,
                                             backgroundColor: Colors.transparent,
+                                            shadows: [
+                                              Shadow(
+                                                color: Colors.black.withOpacity(0.25),
+                                                blurRadius: 2,
+                                                offset: const Offset(0, 0.5),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
